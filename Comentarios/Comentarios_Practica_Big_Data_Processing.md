@@ -1,4 +1,5 @@
 #Descripción de la práctica del módulo de Big Data Processing
+
 *Alumno: Sergio Orenga Roglá*
 
 En el ejercicio de la práctica del módulo de Big Data Processing existen cuatro partes diferenciadas:
@@ -6,11 +7,21 @@ En el ejercicio de la práctica del módulo de Big Data Processing existen cuatr
 
 1. Fuente de datos en tiempo real que envía información sobre 5 antenas de telefonía y 20 dispositivos móviles. Dicha información es enviada al sistema de mensajes de Apache Kafka, y es generada mediante un simulador ejecutado en un contenedor de Docker en local. 
 
-	**INSERTAR IMAGEN DOCKER**
+![](../Comentarios/Docker_simulador.JPG)
 
 2. Servidor de Apache Kafka, que se ejecuta en una instancia de máquina virtual en Google Compute Engine de la plataforma Google Cloud Computing. En este servidor se reciben los mensajes en tiempo real desde las fuentes de datos. Una vez configurada la máquina virtual se tienen que establecer las reglas de firewall para que se pueda acceder a ella desde el ordenador local, donde se ejecuta el job de Spark Structured Streaming. Se accede a la máquina virtual de Apache Kafka mediante la consola de Google Cloud Compute por SSH y se configura la instancia, se crea el topic “devices” que es donde se recibirán los datos de entrada, y se ejecuta el consumidor. 
 
-	**INSERTAR 3 IMÁGENES VM KAFKA**
+Máquina virtual de Kafka
+
+![](../Comentarios/VM_Kafka.JPG)
+
+Regla de Firewall para Kafka
+
+![](../Comentarios/Regla_Firewall_Kafka.JPG)
+
+Conexión Kafka SSH
+
+![](../Comentarios/SSH_Kafka.JPG)
 
 3. Base de datos de PostgreSQL creada en Cloud SQL de Google Cloud Platform. En esta base de datos se crean cuatro tablas desde el job JdbcProvisioner.scala.
 	- *`user_metadata`*. En el job indicado anteriormente se realiza una carga inicial de los datos de esta tabla. 
@@ -24,7 +35,27 @@ En el ejercicio de la práctica del módulo de Big Data Processing existen cuatr
 		- Total de bytes transmitidos por aplicación.
 	- *`user_quota_limit`*. Esta tabla se rellena en batch desde el job AntennaBatchJob.scala con el resultado de la métrica para un año, mes, día y hora determinados:
 		- Email de usuarios que han sobrepasado la cuota por hora.
-**INSERTAR 5 IMÁGENES SQL**
+
+Tablas PostgreSQL
+
+![](../Comentarios/PostgreSQL_tablas.JPG)
+
+Tabla `bytes`
+
+![](../Comentarios/PostgreSQL_tabla_bytes.JPG)
+
+Tabla `bytes_hourly`
+
+![](../Comentarios/PostgreSQL_tabla_bytes_hourly.JPG)
+
+Tabla `user_metadata`
+
+![](../Comentarios/PostgreSQL_tabla_user_metadata.JPG)
+
+Tabla `user_quota_limit`
+
+![](../Comentarios/PostgreSQL_tabla_user_quota_limit.JPG)
+
 4. Job de Spark Structured Streaming que realiza las operaciones para obtener las métricas propuestas y almacenar los resultados en las tablas de la base de datos de PostgreSQL, y también almacena y lee los datos en formato PARQUET en una carpeta local. En el archivo comprimido del proyecto se encuentra todo el código desarrollado, el cual está comentado con la explicación de las tareas desarrolladas, junto con los archivos en formato PARQUET generados. Consta de tres partes:
 	- *Provisioner*. Se encarga de crear las tablas en PostgreSQL, así como de cargar los datos iniciales de la tabla user_metadata (JdbcProvisioner.scala).
 	- *Speed Layer*. Procesa los datos que le llegan desde el servidor de Apache Kafka en tiempo real. Se compone de:
